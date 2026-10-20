@@ -11,11 +11,18 @@ target_sources(matrices
   PUBLIC
     FILE_SET CXX_MODULES
     FILES
+      source/array.cppm
       source/jagged.cppm
 )
 target_compile_features(matrices PUBLIC cxx_std_23)
 
 add_executable(${PROJECT_NAME} source/main.cpp)
+target_sources(${PROJECT_NAME}
+  PRIVATE
+    FILE_SET CXX_MODULES
+    FILES
+      source/util.cppm
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE matrices)
 
 foreach(target ${PROJECT_NAME})
