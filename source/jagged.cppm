@@ -35,7 +35,7 @@ export template <typename T>
 T determinant(JaggedArrayMatrix<T>& a) {
   auto n = a.size();
   if (!n) {
-    return T{0};
+    return T{1};
   }
 
   T sign = T{1};
