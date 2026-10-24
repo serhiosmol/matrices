@@ -7,6 +7,7 @@ module;
 #include <print>
 #include <ranges>
 #include <utility>
+#include <vector>
 
 export module jagged_array_matrix;
 
@@ -24,7 +25,13 @@ public:
   explicit JaggedArrayMatrix(std::size_t rows, std::size_t cols, It start, It finish) :
     array_(rows, cols, start, finish) {}
 
-  static JaggedArrayMatrix eye(std::size_t n) {}
+  static JaggedArrayMatrix eye(std::size_t n) {
+    std::vector<T> v(n * n, T{0});
+    for (std::size_t i : std::views::iota(0uz, n)) {
+      v[i * n + i] = T{1};
+    }
+    return JaggedArrayMatrix(n, n, v.begin(), v.end());
+  }
 
   T& operator[](std::size_t i, std::size_t j) { return array_[i, j]; }
   const T& operator[](std::size_t i, std::size_t j) const { return array_[i, j]; }
