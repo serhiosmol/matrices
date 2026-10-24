@@ -12,7 +12,8 @@ target_sources(matrices
     FILE_SET CXX_MODULES
     FILES
       source/array.cppm
-      source/jagged.cppm
+      source/jagged_array.cppm
+      source/jagged_array_matrix.cppm
 )
 target_compile_features(matrices PUBLIC cxx_std_23)
 
