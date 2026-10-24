@@ -1,72 +1,63 @@
 module;
 
+#include <algorithm>
 #include <cstddef>
+#include <utility>
 
 export module array;
 
-namespace matrices {
+namespace array {
 
 export template <typename T>
 class Array final {
 public:
-  Array() noexcept = default;
+  Array() = default;
+  explicit Array(std::size_t size, T val = T{}) : size_(size), ptr_(size ? new T[size]{val} : nullptr) {}
 
-  explicit Array(std::size_t size) : size_(size), data_(size ? new T[size]{} : nullptr) {}
+  ~Array() { delete[] ptr_; }
 
-  ~Array() { delete[] data_; }
-
-  Array(const Array& rhs) : size_(rhs.size_), data_(rhs.size_ ? new T[rhs.size_]{} : nullptr) {
+  Array(const Array& rhs) : size_(rhs.size_), ptr_(rhs.size_ ? new T[rhs.size_]{} : nullptr) {
     for (std::size_t i = 0; i < rhs.size_; i++) {
-      data_[i] = rhs.data_[i];
+      ptr_[i] = rhs.ptr_[i];
     }
+  }
+
+  Array(Array&& rhs) noexcept : size_(rhs.size_), ptr_(rhs.ptr_) {
+    rhs.size_ = 0;
+    rhs.ptr_ = nullptr;
   }
 
   Array& operator=(const Array& rhs) {
-    if (this != &rhs) {
-      Array tmp(rhs);
-      swap(tmp);
+    if (this == &rhs) {
+      return *this;
     }
-    return *this;
-  }
 
-  Array(Array&& rhs) noexcept : size_(rhs.size_), data_(rhs.data_) {
-    rhs.size_ = 0;
-    rhs.data_ = nullptr;
+    size_ = rhs.size_;
+    delete [] ptr_;
+    ptr_ = new T[size_];
+    std::copy(rhs.ptr_, rhs.ptr_ + size_, ptr_);
+    return *this;
   }
 
   Array& operator=(Array&& rhs) noexcept {
-    if (this != &rhs) {
-      delete[] data_;
-      data_ = rhs.data_;
-      size_ = rhs.size_;
-      rhs.data_ = nullptr;
-      rhs.size_ = 0;
+    if (this == &rhs) {
+      return *this;
     }
+
+    std::swap(ptr_, rhs.ptr_);
+    std::swap(size_, rhs.size_);
     return *this;
   }
 
-  void swap(Array& rhs) noexcept {
-    std::size_t s = size_;
-    size_ = rhs.size_;
-    rhs.size_ = s;
-    T* d = data_;
-    data_ = rhs.data_;
-    rhs.data_ = d;
-  }
+  std::size_t size() const { return size_; }
 
-  std::size_t size() const noexcept { return size_; }
+  T& operator[](std::size_t i) { return ptr_[i]; }
 
-  T& operator[](std::size_t i) { return data_[i]; }
-
-  const T& operator[](std::size_t i) const noexcept { return data_[i]; }
-
-  T* data() noexcept { return data_; }
-
-  const T* data() const noexcept { return data_; }
+  const T& operator[](std::size_t i) const { return ptr_[i]; }
 
 private:
-  std::size_t size_ = 0;
-  T* data_ = nullptr;
+  std::size_t size_;
+  T* ptr_;
 };
 
-}  // namespace matrices
+}  // namespace array
