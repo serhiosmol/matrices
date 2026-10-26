@@ -14,7 +14,7 @@ export template <typename T>
 class JaggedArray final {
 public:
   JaggedArray(std::size_t rows, std::size_t cols, T val = T{}) :
-    rows_(rows), cols_(cols), ptr_(rows > 0 ? new T* [rows]{} : nullptr) {
+    rows_(rows), cols_(cols), ptr_(rows > 0 ? new T* [rows] {} : nullptr) {
     for (std::size_t i : std::views::iota(0uz, rows)) {
       ptr_[i] = new T[cols]{};
       for (std::size_t j : std::views::iota(0uz, cols)) {
