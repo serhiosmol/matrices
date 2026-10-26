@@ -2,6 +2,7 @@ module;
 
 #include <algorithm>
 #include <cstddef>
+#include <ranges>
 #include <utility>
 
 export module array;
@@ -11,15 +12,25 @@ namespace array {
 export template <typename T>
 class Array final {
 public:
-  Array() = default;
-  explicit Array(std::size_t size, T val = T{}) : size_(size), ptr_(size ? new T[size]{val} : nullptr) {}
+  Array(std::size_t size, T val = T{}) : size_(size), ptr_(size > 0 ? new T[size]{} : nullptr) {
+    for (std::size_t i : std::views::iota(0uz, size_)) {
+      ptr_[i] = val;
+    }
+  }
+
+  template <typename It>
+  Array(std::size_t size, It start, It finish) :
+    size_(size), ptr_(size > 0 ? new T[size]{} : nullptr) {
+    for (std::size_t i = 0; i < size && start != finish; i++) {
+      ptr_[i] = *start;
+      start++;
+    }
+  }
 
   ~Array() { delete[] ptr_; }
 
-  Array(const Array& rhs) : size_(rhs.size_), ptr_(rhs.size_ ? new T[rhs.size_]{} : nullptr) {
-    for (std::size_t i = 0; i < rhs.size_; i++) {
-      ptr_[i] = rhs.ptr_[i];
-    }
+  Array(const Array& rhs) : size_(rhs.size_), ptr_(rhs.size_ > 0 ? new T[size_] : nullptr) {
+    std::copy(rhs.ptr_, rhs.ptr_ + size_, ptr_);
   }
 
   Array(Array&& rhs) noexcept : size_(rhs.size_), ptr_(rhs.ptr_) {
@@ -33,7 +44,7 @@ public:
     }
 
     size_ = rhs.size_;
-    delete [] ptr_;
+    delete[] ptr_;
     ptr_ = new T[size_];
     std::copy(rhs.ptr_, rhs.ptr_ + size_, ptr_);
     return *this;
