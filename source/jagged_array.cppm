@@ -86,9 +86,6 @@ public:
     std::swap(rows_, rhs.rows_);
     std::swap(cols_, rhs.cols_);
     std::swap(ptr_, rhs.ptr_);
-    for (std::size_t i : std::views::iota(0uz, rows_)) {
-      std::swap(ptr_[i], rhs.ptr_[i]);
-    }
     return *this;
   }
 
