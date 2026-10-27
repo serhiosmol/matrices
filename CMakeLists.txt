@@ -11,6 +11,7 @@ target_sources(matrices
   PUBLIC
     FILE_SET CXX_MODULES
     FILES
+      source/floating_point_comparing.cppm
       source/array.cppm
       source/jagged_array.cppm
       source/jagged_array_matrix.cppm
