@@ -3,6 +3,7 @@
 #include <print>
 #include <string>
 #include <optional>
+#include <ranges>
 #include <vector>
 
 import jagged_array_matrix;
@@ -15,42 +16,32 @@ int main() {
   }
 
   auto n = result.value();
-  // auto expected_count = n * n;
-
-  std::vector<double> v{1, 0, 0, 0, 1, 0, 0, 0, 1};
-
-  matrices::JaggedArrayMatrix<double> matrix(n, n, v.begin(), v.end());
-
-#if 0
+  std::vector<double> v;
+  
   std::size_t element_count = 0;
-  for (std::size_t i = 0; i < n; i++) {
-    for (std::size_t j = 0; j < n; j++) {
-      auto value = util::read_value<double>();
-      if (!value) {
-        std::println(stderr, "error: expected {} elements for a {}x{} matrix, got {}.",
-                     expected_count, n, n, element_count);
-        return 1;
-      }
-      matrix[i, j] = value.value();
-      element_count++;
+  for (auto _ : std::views::iota(0uz, n * n)) {
+    auto value = util::read_value<double>();
+    if (!value) {
+      std::println(stderr, "error: expected {} arguments for {}x{} matrix, got {}.", n * n, n, n, element_count);
+      return 1;
     }
+    v.push_back(*value);
+    element_count++;
   }
 
   std::cin >> std::ws;
   if (std::cin.peek() != std::char_traits<char>::eof()) {
-    std::println(stderr, "error: too many arguments, first {} were expected", expected_count);
+    std::println(stderr, "error: too many arguments, first {} were expected.", n * n);
     return 1;
   }
-#endif
-  // std::println("{}", matrices::determinant<double>(matrix));
-  matrix.dump();
-  auto t = matrix.trace();
+
+  matrices::JaggedArrayMatrix<double> matrix(n, n, v.begin(), v.end());
+
   auto d = matrix.determinant();
-  if (t.has_value() && d.has_value()) {
-    std::println("trace: {}, determinant: {}", *t, *d);
-  } else {
-    std::println("error: not a square matrix");
+  if (!d) {
+    std::println(stderr, "error: is not a square matrix");
   }
 
+  std::println("{}", *d);
   return 0;
 }
