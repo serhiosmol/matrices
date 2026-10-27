@@ -12,6 +12,7 @@ module;
 export module jagged_array_matrix;
 
 import jagged_array;
+import floating_point_comparing;
 
 namespace matrices {
 
@@ -39,11 +40,28 @@ public:
   std::size_t rows() const { return array_.rows(); }
   std::size_t cols() const { return array_.cols(); }
 
+  T get_max_elem() const {
+    auto rows = array_.rows();
+    auto cols = array_.cols();
+    T max_elem = std::fabs(array_[0, 0]);
+    for (std::size_t i : std::views::iota(0uz, rows)) {
+      for (std::size_t j : std::views::iota(0uz, cols)) {
+        if (max_elem > std::fabs((array_[i, j]))) {
+          max_elem = std::fabs(array_[i, j]);
+        }
+      }
+    }
+
+    return max_elem;
+  }
+
   bool is_square() const { return array_.rows() == array_.cols(); }
 
   void dump(std::ostream& os = std::cout) {
-    for (std::size_t i : std::views::iota(0uz, rows())) {
-      for (std::size_t j : std::views::iota(0uz, cols())) {
+    auto rows = array_.rows();
+    auto cols = array_.cols();
+    for (std::size_t i : std::views::iota(0uz, rows)) {
+      for (std::size_t j : std::views::iota(0uz, cols)) {
         std::print("{:8.3f}", array_[i, j]);
       }
       std::println();
@@ -116,7 +134,7 @@ public:
         }
       }
 
-      if (p == T{0}) {
+      if (cmp::are_equal(p, T{0}, get_max_elem(), rows)) {
         return T{0};
       }
 
