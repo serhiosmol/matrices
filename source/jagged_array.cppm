@@ -92,6 +92,9 @@ public:
   std::size_t rows() const { return rows_; }
   std::size_t cols() const { return cols_; }
 
+  T*& operator[](std::size_t i) { return ptr_[i]; }
+  const T*& operator[](std::size_t i) const { return ptr_[i]; }
+  
   T& operator[](std::size_t i, std::size_t j) { return ptr_[i][j]; }
   const T& operator[](std::size_t i, std::size_t j) const { return ptr_[i][j]; }
 
