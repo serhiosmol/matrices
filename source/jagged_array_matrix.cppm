@@ -62,9 +62,9 @@ public:
     auto cols = array_.cols();
     for (std::size_t i : std::views::iota(0uz, rows)) {
       for (std::size_t j : std::views::iota(0uz, cols)) {
-        std::print("{:8.3f}", array_[i, j]);
+        std::print(os, "{:8.3f}", array_[i, j]);
       }
-      std::println();
+      std::println(os);
     }
   }
 
@@ -91,6 +91,11 @@ public:
       }
     }
 
+    return *this;
+  }
+
+  JaggedArrayMatrix& swap_rows(size_t i, size_t j) & {
+    std::swap(array_[i], array_[j]);
     return *this;
   }
 
