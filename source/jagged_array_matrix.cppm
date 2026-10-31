@@ -38,7 +38,7 @@ public:
   T& operator[](std::size_t i, std::size_t j) { return array_[i, j]; }
   const T& operator[](std::size_t i, std::size_t j) const { return array_[i, j]; }
 
-  JaggedArrayMatrix& operator+=(const JaggedArrayMatrix& rhs) {
+  JaggedArrayMatrix& operator+=(const JaggedArrayMatrix& rhs) & {
     if (!are_same_shaped(rhs)) {
       throw std::invalid_argument("matrices must be the same shape");
     }
@@ -54,7 +54,7 @@ public:
     return *this;
   }
 
-  JaggedArrayMatrix& operator-=(const JaggedArrayMatrix& rhs) {
+  JaggedArrayMatrix& operator-=(const JaggedArrayMatrix& rhs) & {
     if (!are_same_shaped(rhs)) {
       throw std::invalid_argument("matrices must be the same shape");
     }
