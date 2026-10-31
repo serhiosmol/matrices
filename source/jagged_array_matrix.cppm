@@ -54,6 +54,22 @@ public:
     return *this;
   }
 
+  JaggedArrayMatrix& operator-=(const JaggedArrayMatrix& rhs) {
+    if (!are_same_shaped(rhs)) {
+      throw std::invalid_argument("matrices must be the same shape");
+    }
+
+    auto rows = array_.rows();
+    auto cols = array_.cols();
+    for (std::size_t i : std::views::iota(0uz, rows)) {
+      for (std::size_t j : std::views::iota(0uz, cols)) {
+        (*this)[i, j] -= rhs[i, j];
+      }
+    }
+
+    return *this;
+  }
+
   std::size_t rows() const { return array_.rows(); }
   std::size_t cols() const { return array_.cols(); }
 
