@@ -8,6 +8,7 @@ module;
 #include <ranges>
 #include <utility>
 #include <vector>
+#include <stdexcept>
 
 export module jagged_array_matrix;
 
@@ -37,6 +38,22 @@ public:
   T& operator[](std::size_t i, std::size_t j) { return array_[i, j]; }
   const T& operator[](std::size_t i, std::size_t j) const { return array_[i, j]; }
 
+  JaggedArrayMatrix& operator+=(const JaggedArrayMatrix& rhs) {
+    if (!are_same_shaped(rhs)) {
+      throw std::invalid_argument("matrices must be the same shape");
+    }
+
+    auto rows = array_.rows();
+    auto cols = array_.cols();
+    for (std::size_t i : std::views::iota(0uz, rows)) {
+      for (std::size_t j : std::views::iota(0uz, cols)) {
+        (*this)[i, j] += rhs[i, j];
+      }
+    }
+
+    return *this;
+  }
+
   std::size_t rows() const { return array_.rows(); }
   std::size_t cols() const { return array_.cols(); }
 
@@ -56,6 +73,9 @@ public:
   }
 
   bool is_square() const { return array_.rows() == array_.cols(); }
+  bool are_same_shaped(const JaggedArrayMatrix& rhs) const {
+    return (array_.rows() == rhs.rows() && array_.cols() == rhs.cols());
+  }
 
   void dump(std::ostream& os = std::cout) {
     auto rows = array_.rows();
